@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import (
     QTextEdit,
     QDialog,
     QMessageBox,
+    QTableWidget,
+    QTableWidgetItem
 )
 
 from inventory import InventoryItem
@@ -181,9 +183,8 @@ class DisplayInventoryDialog(QDialog):
         self.label = QLabel("Display Inventory:")
         layout.addWidget(self.label)
 
-        self.display_text = QTextEdit()
-        self.display_text.setReadOnly(True)
-        layout.addWidget(self.display_text)
+        self.table_widget = QTableWidget()
+        layout.addWidget(self.table_widget)
 
         self.display_button = QPushButton("Display")
         self.display_button.clicked.connect(self.display_inventory)
@@ -192,16 +193,27 @@ class DisplayInventoryDialog(QDialog):
         self.setLayout(layout)
 
     def display_inventory(self):
-        self.display_text.clear()
+        self.table_widget.clearContents()
+        self.table_widget.setRowCount(0)
+
+        header_labels = ["Product ID", "Product Name", "Product Price", "Product Quantity"]
+        self.table_widget.setColumnCount(len(header_labels))
+        self.table_widget.setHorizontalHeaderLabels(header_labels)
+
         inventory_data = self.parent.inventory.display_inventory()
         if inventory_data:
             for product_id, product in inventory_data.items():
-                self.display_text.append(f"\nProduct ID: {product_id}")
-                self.display_text.append(f"Product Name: {product.product_name}")
-                self.display_text.append(f"Product Price: Rp {product.product_price}")
-                self.display_text.append(f"Product Quantity: {product.product_qty}")
+                row_position = self.table_widget.rowCount()
+                self.table_widget.insertRow(row_position)
+
+                self.table_widget.setItem(row_position, 0, QTableWidgetItem(str(product_id)))
+                self.table_widget.setItem(row_position, 1, QTableWidgetItem(product.product_name))
+                self.table_widget.setItem(row_position, 2, QTableWidgetItem(f"Rp {product.product_price}"))
+                self.table_widget.setItem(row_position, 3, QTableWidgetItem(str(product.product_qty)))
         else:
-            self.display_text.append("Inventory is empty.")
+            self.table_widget.setRowCount(1)
+            self.table_widget.setItem(0, 0, QTableWidgetItem("Inventory is empty."))
+
         self.show()
 
 
