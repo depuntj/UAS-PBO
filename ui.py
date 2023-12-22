@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QMessageBox,
     QTableWidget,
-    QTableWidgetItem
+    QTableWidgetItem,
 )
 
 from inventory import InventoryItem
@@ -73,30 +73,6 @@ class AddProductDialog(QDialog):
             self.accept()
         else:
             print("Please enter valid values for price and quantity")
-
-
-class RemoveProductDialog(QDialog):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
-        self.init_ui()
-
-    def init_ui(self):
-        layout = QVBoxLayout()
-
-        self.label = QLabel("Remove Product:")
-        layout.addWidget(self.label)
-
-        self.product_id_label = QLabel("Product ID:")
-        layout.addWidget(self.product_id_label)
-        self.product_id_edit = QLineEdit()
-        layout.addWidget(self.product_id_edit)
-
-        self.remove_button = QPushButton("Remove")
-        self.remove_button.clicked.connect(self.remove_product)
-        layout.addWidget(self.remove_button)
-
-        self.setLayout(layout)
 
 
 class RemoveProductDialog(QDialog):
@@ -196,7 +172,12 @@ class DisplayInventoryDialog(QDialog):
         self.table_widget.clearContents()
         self.table_widget.setRowCount(0)
 
-        header_labels = ["Product ID", "Product Name", "Product Price", "Product Quantity"]
+        header_labels = [
+            "Product ID",
+            "Product Name",
+            "Product Price",
+            "Product Quantity",
+        ]
         self.table_widget.setColumnCount(len(header_labels))
         self.table_widget.setHorizontalHeaderLabels(header_labels)
 
@@ -206,10 +187,18 @@ class DisplayInventoryDialog(QDialog):
                 row_position = self.table_widget.rowCount()
                 self.table_widget.insertRow(row_position)
 
-                self.table_widget.setItem(row_position, 0, QTableWidgetItem(str(product_id)))
-                self.table_widget.setItem(row_position, 1, QTableWidgetItem(product.product_name))
-                self.table_widget.setItem(row_position, 2, QTableWidgetItem(f"Rp {product.product_price}"))
-                self.table_widget.setItem(row_position, 3, QTableWidgetItem(str(product.product_qty)))
+                self.table_widget.setItem(
+                    row_position, 0, QTableWidgetItem(str(product_id))
+                )
+                self.table_widget.setItem(
+                    row_position, 1, QTableWidgetItem(product.product_name)
+                )
+                self.table_widget.setItem(
+                    row_position, 2, QTableWidgetItem(f"Rp {product.product_price}")
+                )
+                self.table_widget.setItem(
+                    row_position, 3, QTableWidgetItem(str(product.product_qty))
+                )
         else:
             self.table_widget.setRowCount(1)
             self.table_widget.setItem(0, 0, QTableWidgetItem("Inventory is empty."))
